@@ -6,30 +6,27 @@
 --  ELIMINAR TABLAS
 -- -----------------------------
 
-DROP TABLE IF EXISTS ContractStatusHistory;
-DROP TABLE IF EXISTS VehicleStatusHistory;
-DROP TABLE IF EXISTS Refund;
-DROP TABLE IF EXISTS Payment;
-DROP TABLE IF EXISTS Contract_Fine;
-DROP TABLE IF EXISTS Fine;
-DROP TABLE IF EXISTS Rental_Contract;
-DROP TABLE IF EXISTS Reservation;
-DROP TABLE IF EXISTS Vehicle_Maintenance;
-DROP TABLE IF EXISTS Maintenance;
-DROP TABLE IF EXISTS Vehicle;
-DROP TABLE IF EXISTS Rates;
-DROP TABLE IF EXISTS Model_Color;
-DROP TABLE IF EXISTS Color;
-DROP TABLE IF EXISTS Model;
-DROP TABLE IF EXISTS VehicleType;
-DROP TABLE IF EXISTS Manufacturer;
-DROP TABLE IF EXISTS Facility;
-DROP TABLE IF EXISTS Customer_Address;
-DROP TABLE IF EXISTS Customer;
-DROP TABLE IF EXISTS Address;
-DROP TABLE IF EXISTS Country;
-DROP TABLE IF EXISTS Status;
-DROP TYPE IF EXISTS payment_method_enum;
+DROP TABLE IF EXISTS Refund CASCADE;
+DROP TABLE IF EXISTS Payment CASCADE;
+DROP TABLE IF EXISTS Contract_Fine CASCADE;
+DROP TABLE IF EXISTS Fine CASCADE;
+DROP TABLE IF EXISTS RentalContract CASCADE;
+DROP TABLE IF EXISTS Reservation CASCADE;
+DROP TABLE IF EXISTS Vehicle_Maintenance CASCADE;
+DROP TABLE IF EXISTS Maintenance CASCADE;
+DROP TABLE IF EXISTS Vehicle CASCADE;
+DROP TABLE IF EXISTS Rates CASCADE;
+DROP TABLE IF EXISTS Model_Color CASCADE;
+DROP TABLE IF EXISTS Color CASCADE;
+DROP TABLE IF EXISTS Model CASCADE;
+DROP TABLE IF EXISTS VehicleType CASCADE;
+DROP TABLE IF EXISTS Manufacturer CASCADE;
+DROP TABLE IF EXISTS Facility CASCADE;
+DROP TABLE IF EXISTS Customer_Address CASCADE;
+DROP TABLE IF EXISTS Customer CASCADE;
+DROP TABLE IF EXISTS Address CASCADE;
+DROP TABLE IF EXISTS Country CASCADE;
+DROP TABLE IF EXISTS Status CASCADE;
 
 -- -----------------------------
 --  CREAR TABLAS (PRINCIPALES)
@@ -66,7 +63,7 @@ CREATE TABLE Customer (
     last_name VARCHAR(64) NOT NULL,
     date_of_birth DATE NOT NULL,
     driver_license_number VARCHAR(64) NOT NULL UNIQUE,
-    email VARCHAR NOT NULL UNIQUE CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+    email VARCHAR(128) NOT NULL UNIQUE,
     phone_number VARCHAR(16) NOT NULL,
     registration_date DATE NOT NULL DEFAULT CURRENT_DATE
 );
@@ -212,24 +209,4 @@ CREATE TABLE Refund (
     amount DECIMAL(10,2) NOT NULL CHECK (amount >= 0),
     reason TEXT NOT NULL,
     status_id INTEGER NOT NULL REFERENCES Status(id)
-);
-
--- -----------------------------
---  CREAR TABLAS (AUDITORÍA)
--- -----------------------------
-
--- Tabla: Historial de Estados de Vehículos
-CREATE TABLE VehicleStatusHistory (
-    id SERIAL PRIMARY KEY,
-    vehicle_id INTEGER NOT NULL REFERENCES Vehicle(id),
-    status_id INTEGER NOT NULL REFERENCES Status(id),
-    changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
--- Tabla: Historial de Estados de Contratos
-CREATE TABLE ContractStatusHistory (
-    id SERIAL PRIMARY KEY,
-    rental_contract_id INTEGER NOT NULL REFERENCES RentalContract(id),
-    status_id INTEGER NOT NULL REFERENCES Status(id),
-    changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
