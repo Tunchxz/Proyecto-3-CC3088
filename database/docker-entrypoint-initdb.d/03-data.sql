@@ -24,7 +24,7 @@ TRUNCATE TABLE Country CASCADE;
 TRUNCATE TABLE Model CASCADE;
 TRUNCATE TABLE VehicleType CASCADE;
 TRUNCATE TABLE Manufacturer CASCADE;
-TRUNCATE TABLE Status CASCADE;
+TRUNCATE TABLE OperationStatus CASCADE;
 TRUNCATE TABLE Rates CASCADE;
 TRUNCATE TABLE Customer CASCADE;
 
@@ -56,7 +56,7 @@ INSERT INTO Country (id, country_name) VALUES
 (20, 'Poland');
 
 -- Poblar: Estados
-INSERT INTO Status (id, status_name) VALUES
+INSERT INTO OperationStatus (id, status_name) VALUES
 (1, 'Available'),
 (2, 'Reserved'),
 (3, 'Rented'),

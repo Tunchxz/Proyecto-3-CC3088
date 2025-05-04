@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16
+    container_name: pg_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: alquilerdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - alquiler_net
+
+  backend:
+    build: ./backend
+    container_name: alquiler_backend
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "9000:9000"
+    environment:
+      DB_URL: postgres://postgres:12345@db:5432/alquilerdb?sslmode=disable
+    networks:
+      - alquiler_net
+
+networks:
+  alquiler_net:
+    driver: bridge

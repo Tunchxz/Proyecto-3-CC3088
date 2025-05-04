@@ -22,14 +22,14 @@ DECLARE
     contract_status VARCHAR;
 BEGIN
     -- Obtener identificadores de estado
-    SELECT id INTO status_id_available FROM Status WHERE status_name = 'Available';
-    SELECT id INTO status_id_reserved FROM Status WHERE status_name = 'Reserved';
-    SELECT id INTO status_id_rented FROM Status WHERE status_name = 'Rented';
+    SELECT id INTO status_id_available FROM OperationStatus WHERE status_name = 'Available';
+    SELECT id INTO status_id_reserved FROM OperationStatus WHERE status_name = 'Reserved';
+    SELECT id INTO status_id_rented FROM OperationStatus WHERE status_name = 'Rented';
     
     IF TG_TABLE_NAME = 'reservation' THEN
         -- Cuando cambia una reserva
         SELECT status_name INTO reservation_status 
-        FROM Status 
+        FROM OperationStatus 
         WHERE id = NEW.status_id;
         
         IF reservation_status = 'Confirmed' THEN
@@ -40,7 +40,7 @@ BEGIN
             -- Verificar si no hay un contrato de alquiler activo para este vehículo antes de marcar como Disponible
             IF NOT EXISTS (
                 SELECT 1 FROM RentalContract rc 
-                JOIN Status s ON rc.status_id = s.id 
+                JOIN OperationStatus s ON rc.status_id = s.id 
                 WHERE rc.reservation_id = NEW.id AND s.status_name = 'Active'
             ) THEN
                 UPDATE Vehicle SET status_id = status_id_available
@@ -50,7 +50,7 @@ BEGIN
     ELSIF TG_TABLE_NAME = 'rentalcontract' THEN
         -- Cuando un contrato cambia
         SELECT status_name INTO contract_status 
-        FROM Status 
+        FROM OperationStatus 
         WHERE id = NEW.status_id;
         
         IF contract_status = 'Active' THEN
@@ -188,7 +188,7 @@ BEGIN
     END IF;
     
     -- Obtener el ID del estado de mantenimiento
-    SELECT id INTO status_id_maintenance FROM Status WHERE status_name = 'Under Maintenance';
+    SELECT id INTO status_id_maintenance FROM OperationStatus WHERE status_name = 'Under Maintenance';
     
     -- Obtener el kilometraje del último cambio de aceite
     SELECT COALESCE(MAX(v.mileage), 0)
@@ -274,15 +274,15 @@ BEGIN
     WHERE id = NEW.reservation_id;
     
     -- Obtener IDs de estado
-    SELECT id INTO status_id_available FROM Status WHERE status_name = 'Available';
-    SELECT id INTO status_id_reserved FROM Status WHERE status_name = 'Reserved';
+    SELECT id INTO status_id_available FROM OperationStatus WHERE status_name = 'Available';
+    SELECT id INTO status_id_reserved FROM OperationStatus WHERE status_name = 'Reserved';
     
     -- Verificar si el vehículo ya está alquilado para el período dado
     IF EXISTS (
         SELECT 1
         FROM RentalContract rc
         JOIN Reservation r ON rc.reservation_id = r.id
-        JOIN Status s ON rc.status_id = s.id
+        JOIN OperationStatus s ON rc.status_id = s.id
         WHERE r.vehicle_id = v_vehicle_id
         AND s.status_name = 'Active'
         AND rc.id <> COALESCE(NEW.id, 0)  -- Excluir el contrato actual en caso de actualización
@@ -322,7 +322,7 @@ BEGIN
     IF EXISTS (
         SELECT 1
         FROM Reservation r
-        JOIN Status s ON r.status_id = s.id
+        JOIN OperationStatus s ON r.status_id = s.id
         WHERE r.vehicle_id = NEW.vehicle_id
         AND r.id <> COALESCE(NEW.id, 0)  -- Excluir la reserva actual en caso de actualización
         AND s.status_name IN ('Confirmed', 'Active')

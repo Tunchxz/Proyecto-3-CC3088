@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS Customer_Address CASCADE;
 DROP TABLE IF EXISTS Customer CASCADE;
 DROP TABLE IF EXISTS Address CASCADE;
 DROP TABLE IF EXISTS Country CASCADE;
-DROP TABLE IF EXISTS Status CASCADE;
+DROP TABLE IF EXISTS OperationStatus CASCADE;
 
 -- -----------------------------
 --  CREAR TABLAS (PRINCIPALES)
@@ -39,7 +39,7 @@ CREATE TABLE Country (
 );
 
 -- Tabla: Estados
-CREATE TABLE Status (
+CREATE TABLE OperationStatus (
     id SERIAL PRIMARY KEY,
     status_name VARCHAR(64) NOT NULL UNIQUE
 );
@@ -134,7 +134,7 @@ CREATE TABLE Vehicle (
     facility_id INTEGER NOT NULL REFERENCES Facility(id),
     car_plate VARCHAR(64) NOT NULL UNIQUE,
     mileage INTEGER NOT NULL CHECK (mileage >= 0),
-    status_id INTEGER NOT NULL REFERENCES Status(id),
+    status_id INTEGER NOT NULL REFERENCES OperationStatus(id),
     rates_id INTEGER NOT NULL REFERENCES Rates(id)
 );
 
@@ -161,7 +161,7 @@ CREATE TABLE Reservation (
     reservation_date DATE NOT NULL DEFAULT CURRENT_DATE,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL CHECK (end_date >= start_date),
-    status_id INTEGER NOT NULL REFERENCES Status(id)
+    status_id INTEGER NOT NULL REFERENCES OperationStatus(id)
 );
 
 -- Tabla: Contratos de Renta
@@ -170,7 +170,7 @@ CREATE TABLE RentalContract (
     reservation_id INTEGER NOT NULL UNIQUE REFERENCES Reservation(id),
     start_date DATE NOT NULL,
     end_date DATE NOT NULL CHECK (end_date >= start_date),
-    status_id INTEGER NOT NULL REFERENCES Status(id)
+    status_id INTEGER NOT NULL REFERENCES OperationStatus(id)
 );
 
 -- Tabla: Multas
@@ -180,7 +180,7 @@ CREATE TABLE Fine (
     fine_date DATE NOT NULL DEFAULT CURRENT_DATE,
     amount DECIMAL(10,2) NOT NULL CHECK (amount >= 0),
     reason TEXT NOT NULL,
-    status_id INTEGER NOT NULL REFERENCES Status(id)
+    status_id INTEGER NOT NULL REFERENCES OperationStatus(id)
 );
 
 -- Tabla: Contratos-Multas
@@ -198,7 +198,7 @@ CREATE TABLE Payment (
     payment_date DATE NOT NULL DEFAULT CURRENT_DATE,
     amount DECIMAL(10,2) NOT NULL CHECK (amount >= 0),
     payment_method VARCHAR NOT NULL CHECK (payment_method IN ('Cash', 'Card', 'Transfer')),
-    status_id INTEGER NOT NULL REFERENCES Status(id)
+    status_id INTEGER NOT NULL REFERENCES OperationStatus(id)
 );
 
 -- Tabla: Rembolsos
@@ -208,5 +208,5 @@ CREATE TABLE Refund (
     refund_date DATE NOT NULL DEFAULT CURRENT_DATE,
     amount DECIMAL(10,2) NOT NULL CHECK (amount >= 0),
     reason TEXT NOT NULL,
-    status_id INTEGER NOT NULL REFERENCES Status(id)
+    status_id INTEGER NOT NULL REFERENCES OperationStatus(id)
 );
