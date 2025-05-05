@@ -33,12 +33,18 @@
 </div>
 
 <style>
+    .table-container {
+        max-height: 55vh;         /* Limita la altura vertical */
+        max-width: 120vh;         /* Se mantiene el ancho horizontal que usabas */
+        overflow-y: auto;         /* Scroll vertical si hay muchos registros */
+        margin: 0 auto 2rem auto; /* Centrado + espacio inferior para los botones */
+        border: 1px solid #444;
+        border-radius: 6px;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
-        margin: auto;
-        position: relative;
-
     }
     
     th, td {
@@ -51,17 +57,12 @@
         background-color: #0f0f0f;
         font-weight: bold;
         color: white;
-    }
-    
-    tr:nth-child(even) {
-        background-color: rgb(102, 102, 102);
+        position: sticky;
+        top: 0;
+        z-index: 1;
     }
 
-    .table-container {
-        max-height: 60vh;
-        max-width:  120vh;
-        align-items: center;
-        overflow-y: auto;
-        margin: auto;
+    tr:nth-child(even) {
+        background-color: rgb(102, 102, 102);
     }
 </style>
