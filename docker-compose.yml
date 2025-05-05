@@ -27,6 +27,17 @@ services:
     networks:
       - alquiler_net
 
+  frontend:
+    build: ./Frontend
+    container_name: alquiler_frontend
+    restart: always
+    ports:
+      - "4000:80"
+    depends_on:
+      - backend
+    networks:
+      - alquiler_net
+
 networks:
   alquiler_net:
     driver: bridge
