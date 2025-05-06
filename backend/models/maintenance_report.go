@@ -4,9 +4,9 @@ import "time"
 
 type MaintenanceReport struct {
 	ID          int       `json:"id"`
-	VehicleID   int       `json:"vehicle_id"`
+	CarPlate    string    `json:"car_plate"`
 	Date        time.Time `json:"maintenance_date"`
 	Description string    `json:"description"`
 	Cost        float64   `json:"cost"`
-	StatusID    int       `json:"status_id"`
+	StatusName  string    `json:"status_name"`
 }

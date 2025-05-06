@@ -9,5 +9,5 @@ type PaymentReport struct {
 	Date       time.Time `json:"payment_date"`
 	Amount     float64   `json:"amount"`
 	Method     string    `json:"payment_method"`
-	StatusID   int       `json:"status_id"`
+	StatusName string    `json:"status_name"`
 }

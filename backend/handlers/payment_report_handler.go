@@ -9,16 +9,22 @@ import (
 
 func GetPaymentReport(w http.ResponseWriter, r *http.Request) {
 	query := `
-		SELECT id, rental_contract_id, fine_id, payment_date, amount, payment_method, status_id
-		FROM Payment
-		WHERE ($1::DATE IS NULL OR payment_date >= $1)
-		  AND ($2::DATE IS NULL OR payment_date <= $2)
-		  AND ($3::TEXT IS NULL OR payment_method = $3)
-		  AND ($4::NUMERIC IS NULL OR amount >= $4)
-		  AND ($5::NUMERIC IS NULL OR amount <= $5)
-		  AND ($6::INT IS NULL OR status_id = $6)
-		  AND ($7::INT IS NULL OR rental_contract_id = $7)
-		  AND ($8::INT IS NULL OR fine_id = $8)
+		SELECT
+			p.id,
+			p.rental_contract_id,
+			p.fine_id,
+			p.payment_date,
+			p.amount,
+			p.payment_method,
+			os.status_name
+		FROM Payment p
+		JOIN OperationStatus os ON p.status_id = os.id
+		WHERE ($1::DATE IS NULL OR p.payment_date >= $1)
+		  AND ($2::DATE IS NULL OR p.payment_date <= $2)
+		  AND ($3::TEXT IS NULL OR p.payment_method ILIKE $3)
+		  AND ($4::NUMERIC IS NULL OR p.amount >= $4)
+		  AND ($5::NUMERIC IS NULL OR p.amount <= $5)
+		  AND ($6::TEXT IS NULL OR os.status_name ILIKE $6)
 	`
 
 	startDate := r.URL.Query().Get("start_date")
@@ -26,15 +32,15 @@ func GetPaymentReport(w http.ResponseWriter, r *http.Request) {
 	method := r.URL.Query().Get("payment_method")
 	minAmount := r.URL.Query().Get("min_amount")
 	maxAmount := r.URL.Query().Get("max_amount")
-	statusID := r.URL.Query().Get("status_id")
-	contractID := r.URL.Query().Get("rental_contract_id")
-	fineID := r.URL.Query().Get("fine_id")
+	statusName := r.URL.Query().Get("status_name")
 
 	rows, err := db.Conn.Query(r.Context(), query,
-		parseDate(startDate), parseDate(endDate),
-		parseString(method),
-		parseFloat(minAmount), parseFloat(maxAmount),
-		parseInt(statusID), parseInt(contractID), parseInt(fineID),
+		parseDate(startDate),
+		parseDate(endDate),
+		likeString(method),
+		parseFloat(minAmount),
+		parseFloat(maxAmount),
+		likeString(statusName),
 	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -45,7 +51,9 @@ func GetPaymentReport(w http.ResponseWriter, r *http.Request) {
 	var report []models.PaymentReport
 	for rows.Next() {
 		var p models.PaymentReport
-		if err := rows.Scan(&p.ID, &p.ContractID, &p.FineID, &p.Date, &p.Amount, &p.Method, &p.StatusID); err != nil {
+		if err := rows.Scan(
+			&p.ID, &p.ContractID, &p.FineID, &p.Date, &p.Amount, &p.Method, &p.StatusName,
+		); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

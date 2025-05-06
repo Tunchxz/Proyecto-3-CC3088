@@ -7,5 +7,5 @@ type ContractReport struct {
 	ReservationID int       `json:"reservation_id"`
 	StartDate     time.Time `json:"start_date"`
 	EndDate       time.Time `json:"end_date"`
-	StatusID      int       `json:"status_id"`
+	StatusName    string    `json:"status_name"`
 }

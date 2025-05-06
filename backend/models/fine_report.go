@@ -8,5 +8,5 @@ type FineReport struct {
 	Date       time.Time `json:"fine_date"`
 	Amount     float64   `json:"amount"`
 	Reason     string    `json:"reason"`
-	StatusID   int       `json:"status_id"`
+	StatusName string    `json:"status_name"`
 }

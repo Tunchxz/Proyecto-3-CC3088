@@ -44,3 +44,11 @@ func parseString(value string) *string {
 	}
 	return &value
 }
+
+func likeString(value string) *string {
+	if value == "" {
+		return nil
+	}
+	like := "%" + value + "%"
+	return &like
+}
