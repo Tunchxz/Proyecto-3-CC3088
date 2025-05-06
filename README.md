@@ -26,6 +26,8 @@ Proyecto-3-CC3088/
 
 ├── database/ # Scripts DDL, datos y funciones SQL
 
+├── database/ # Carpeta con las reflexiones por integrante
+
 ├── docker-compose.yml  # Orquestación de servicios
 
 ├── README.md # Instrucciones del proyecto
@@ -62,4 +64,5 @@ http://localhost:4000
 
 ## ▶️ Video demostrativo del funcionamiento del Proyecto
 
+- Enlace al video: https://youtu.be/PyqFkSsrxlE
 
