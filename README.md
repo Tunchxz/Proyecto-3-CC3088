@@ -26,7 +26,7 @@ Proyecto-3-CC3088/
 
 ├── database/ # Scripts DDL, datos y funciones SQL
 
-├── database/ # Carpeta con las reflexiones por integrante
+├── Reflexiones/ # Carpeta con las reflexiones por integrante
 
 ├── docker-compose.yml  # Orquestación de servicios
 
